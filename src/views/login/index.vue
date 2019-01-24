@@ -3,7 +3,7 @@
     <el-form class="login-form" autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm"
              label-position="left">
       <div class="title-container">
-        <img src="static/kika_logo.png" height="60"/>
+        <img src="static/logo.png" height="60"/>
         <div style="display: inline-block;font-size:42px;margin-left: 10px;color:#fff;">Data Studio</div>
       </div>
       <el-form-item prop="username">
