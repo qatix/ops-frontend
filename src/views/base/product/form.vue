@@ -21,6 +21,16 @@
         <el-form-item label="售价">
           <el-input v-model="form.price" placeholder="售价"></el-input>
         </el-form-item>
+
+
+        <div class="editor-container">
+          <el-tag class="tag-title">Basic:</el-tag>
+          <markdown-editor v-model="form.content" height="300px"/>
+        </div>
+
+        <div>
+          <tinymce :height="300" v-model="form.content2"/>
+        </div>
       </el-form>
     </section>
   </article>
@@ -28,6 +38,8 @@
 
 <script>
   import Sticky from '@/components/Sticky'
+  import MarkdownEditor from '@/components/MarkdownEditor'
+  import Tinymce from '@/components/Tinymce'
 
   export default {
     name: 'productForm',
@@ -37,7 +49,9 @@
       }
     },
     components: {
-      Sticky
+      Sticky,
+      MarkdownEditor,
+      Tinymce
     },
     computed: {},
     mounted () {
