@@ -26,7 +26,7 @@
     </el-date-picker>
 
     <el-button class="filter-item" v-if="filter_params.filter_group == 'custom'" type="primary" icon="el-icon-search"
-               @click="getSalesReport">查询
+               >查询
     </el-button>
 
     <div class="flex1 echarts-panel" style="margin-top: 20px">
@@ -38,7 +38,9 @@
   </div>
 </template>
 <script>
-  import echarts from 'echarts'
+  import * as echarts from 'echarts'
+  import { deepClone } from '@/utils/index'
+  import moment from 'moment';
 
   export default {
     name: 'documentation',
@@ -46,30 +48,32 @@
       return {
         filter_params: {
           filter_group: 'last7days',
-          date_start: '',
-          date_end: ''
+          date_start: moment().subtract(3,"days").format('yyyy-MM-DD'),
+          date_end: moment().format('yyyy-MM-DD'),
         },
-        sales_report_echart_init: false,
-        sales_report_echart: {},
-        sales_report_data: {
-          legend: {
-            source_type: [],
-            income: []
-          },
-          series: {
-            source_type: [],
-            income: []
-          }
-        },
-        sales_report_options: {
+        tab_active: 'source_type'
+      }
+    },
+    methods: {
+      onChangeTab () {
+        if (this.data.filter_params.filter_group == 'custom') {
+          return
+        }
+      },
+      initChart(){
+        var chartDom = document.getElementById('sales-report');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
           title: {
-            show: false,
+            text: 'Stacked Line'
           },
           tooltip: {
             trigger: 'axis'
           },
           legend: {
-            data: []
+            data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
           },
           grid: {
             left: '3%',
@@ -85,57 +89,49 @@
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: []
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
           },
           yAxis: {
             type: 'value'
           },
-          series: []
-        },
-        tab_active: 'source_type'
-      }
-    },
-    methods: {
-      onChangeTab () {
-        if (this.data.filter_params.filter_group == 'custom') {
-          return
-        }
-
-        this.getSalesReport()
-      },
-      async getSalesReport () {
-        this.sales_report_data.legend.source_type = []
-        this.sales_report_data.series.source_type = []
-
-        let res = await this.$store.api.salesReport(this.filter_params)
-        if (res.code === 0) {
-          if (!this.sales_report_echart_init) {
-            this.sales_report_echart = echarts.init(document.getElementById('sales-report'))
-            this.sales_report_echart_init = true
-          }
-          this.sales_report_options.xAxis.data = res.report.categories
-          res.report.source_type_data.map(item => {
-            this.sales_report_data.legend.source_type.push(item.name)
-            this.sales_report_data.series.source_type.push({...item, type: 'line', smooth: true})
-          })
-
-          this.setOptionSalesReport()
-        } else {
-          this.$message.error(res.msg || '数据获取失败')
-        }
-      },
-      setOptionSalesReport () {
-        let type = this.tab_active
-
-        this.sales_report_options.legend.data = this.sales_report_data.legend[type]
-
-        this.sales_report_options.series = this.sales_report_data.series[type]
-
-        this.sales_report_echart.setOption(this.sales_report_options)
+          series: [
+            {
+              name: 'Email',
+              type: 'line',
+              stack: 'Total',
+              data: [120, 132, 101, 134, 90, 230, 210]
+            },
+            {
+              name: 'Union Ads',
+              type: 'line',
+              stack: 'Total',
+              data: [220, 182, 191, 234, 290, 330, 310]
+            },
+            {
+              name: 'Video Ads',
+              type: 'line',
+              stack: 'Total',
+              data: [150, 232, 201, 154, 190, 330, 410]
+            },
+            {
+              name: 'Direct',
+              type: 'line',
+              stack: 'Total',
+              data: [320, 332, 301, 334, 390, 330, 320]
+            },
+            {
+              name: 'Search Engine',
+              type: 'line',
+              stack: 'Total',
+              data: [820, 932, 901, 934, 1290, 1330, 1320]
+            }
+          ]
+        };
+        option && myChart.setOption(option);
       }
     },
     mounted () {
-      this.getSalesReport()
+      this.initChart()
     }
   }
 </script>

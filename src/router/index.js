@@ -197,6 +197,26 @@ export const asyncRouterMap = [
         hidden: true
       },
       {
+        path: 'config/list',
+        component: _import("sys/config/list"),
+        name: 'configList',
+        meta: {title: 'Config', cache: false}
+      },
+      {
+        path: 'config/add',
+        component: _import("sys/config/form"),
+        name: 'configAddForm',
+        meta: {title: 'Add Config'},
+        hidden : true
+      },
+      {
+        path: 'config/edit/:id',
+        component: _import('sys/config/form'),
+        name: 'configEditForm',
+        meta: {title: 'Edit Config'},
+        hidden: true
+      },
+      {
         path: 'log/list',
         component: _import('sys/log/list'),
         name: 'logList',
